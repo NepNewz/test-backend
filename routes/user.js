@@ -8,7 +8,7 @@ const router = express.Router()
 
 
 router.post("/user",user)
-router.post("/edit",edit)
+router.post("/edit/:token",edit)
 
 
 export default router

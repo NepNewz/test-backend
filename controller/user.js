@@ -10,10 +10,16 @@ export const user = async(req,res)=>{
     try {
         const newUser = new User({name,sector,agreement})
 
-        await newUser.save()
-        const token = jwt.sign({id:user._id},process.env.KEY)
+        const user = await newUser.save()
+       if(user){
+        const token = await jwt.sign({id:user._id},process.env.KEY)
 
         res.status(200).json(token)
+
+       }
+        
+        
+        
      
 
 
