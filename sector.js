@@ -1,0 +1,356 @@
+import express from "express"
+import mongoose from "mongoose";
+import dotenv from "dotenv"
+import {Sector} from "./model/sectors.js" // Adjust the path based on your project structure
+
+const app = express();
+const port = 3000;
+dotenv.config()
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO, { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+  console.log('Connected to MongoDB');
+});
+
+// Your JSON data
+const jsonData = [
+  {
+    "_id": "1",
+    "sector": "Manufacturing"
+  },
+  {
+    "_id": "19",
+    "sector": "Construction materials"
+  },
+  {
+    "_id": "18",
+    "sector": "Electronics and Optics"
+  },
+  {
+    "_id": "6",
+    "sector": "Food and Beverage"
+  },
+  {
+    "_id": "342",
+    "sector": "Bakery & confectionery products"
+  },
+  {
+    "_id": "43",
+    "sector": "Beverages"
+  },
+  {
+    "_id": "42",
+    "sector": "Fish & fish products"
+  },
+  {
+    "_id": "40",
+    "sector": "Meat & meat products"
+  },
+  {
+    "_id": "39",
+    "sector": "Milk & dairy products"
+  },
+  {
+    "_id": "437",
+    "sector": "Other"
+  },
+  {
+    "_id": "378",
+    "sector": "Sweets & snack food"
+  },
+  {
+    "_id": "13",
+    "sector": "Furniture"
+  },
+  {
+    "_id": "389",
+    "sector": "Bathroom/sauna"
+  },
+  {
+    "_id": "385",
+    "sector": "Bedroom"
+  },
+  {
+    "_id": "390",
+    "sector": "Children room"
+  },
+  {
+    "_id": "98",
+    "sector": "Kitchen"
+  },
+  {
+    "_id": "101",
+    "sector": "Living room"
+  },
+  {
+    "_id": "392",
+    "sector": "Office"
+  },
+  {
+    "_id": "394",
+    "sector": "Other (Furniture)"
+  },
+  {
+    "_id": "341",
+    "sector": "Outdoor"
+  },
+  {
+    "_id": "99",
+    "sector": "Project furniture"
+  },
+  {
+    "_id": "12",
+    "sector": "Machinery"
+  },
+  {
+    "_id": "94",
+    "sector": "Machinery components"
+  },
+  {
+    "_id": "91",
+    "sector": "Machinery equipment/tools"
+  },
+  {
+    "_id": "224",
+    "sector": "Manufacture of machinery"
+  },
+  {
+    "_id": "97",
+    "sector": "Maritime"
+  },
+  {
+    "_id": "271",
+    "sector": "Aluminium and steel workboats"
+  },
+  {
+    "_id": "269",
+    "sector": "Boat/Yacht building"
+  },
+  {
+    "_id": "230",
+    "sector": "Ship repair and conversion"
+  },
+  {
+    "_id": "93",
+    "sector": "Metal structures"
+  },
+  {
+    "_id": "508",
+    "sector": "Other"
+  },
+  {
+    "_id": "227",
+    "sector": "Repair and maintenance service"
+  },
+  {
+    "_id": "11",
+    "sector": "Metalworking"
+  },
+  {
+    "_id": "67",
+    "sector": "Construction of metal structures"
+  },
+  {
+    "_id": "263",
+    "sector": "Houses and buildings"
+  },
+  {
+    "_id": "267",
+    "sector": "Metal products"
+  },
+  {
+    "_id": "542",
+    "sector": "Metal works"
+  },
+  {
+    "_id": "75",
+    "sector": "CNC-machining"
+  },
+  {
+    "_id": "62",
+    "sector": "Forgings, Fasteners"
+  },
+  {
+    "_id": "69",
+    "sector": "Gas, Plasma, Laser cutting"
+  },
+  {
+    "_id": "66",
+    "sector": "MIG, TIG, Aluminum welding"
+  },
+  {
+    "_id": "9",
+    "sector": "Plastic and Rubber"
+  },
+  {
+    "_id": "54",
+    "sector": "Packaging"
+  },
+  {
+    "_id": "556",
+    "sector": "Plastic goods"
+  },
+  {
+    "_id": "559",
+    "sector": "Plastic processing technology"
+  },
+  {
+    "_id": "55",
+    "sector": "Blowing"
+  },
+  {
+    "_id": "57",
+    "sector": "Moulding"
+  },
+  {
+    "_id": "53",
+    "sector": "Plastics welding and processing"
+  },
+  {
+    "_id": "560",
+    "sector": "Plastic profiles"
+  },
+  {
+    "_id": "5",
+    "sector": "Printing"
+  },
+  {
+    "_id": "148",
+    "sector": "Advertising"
+  },
+  {
+    "_id": "150",
+    "sector": "Book/Periodicals printing"
+  },
+  {
+    "_id": "145",
+    "sector": "Labelling and packaging printing"
+  },
+  {
+    "_id": "7",
+    "sector": "Textile and Clothing"
+  },
+  {
+    "_id": "44",
+    "sector": "Clothing"
+  },
+  {
+    "_id": "45",
+    "sector": "Textile"
+  },
+  {
+    "_id": "8",
+    "sector": "Wood"
+  },
+  {
+    "_id": "337",
+    "sector": "Other (Wood)"
+  },
+  {
+    "_id": "51",
+    "sector": "Wooden building materials"
+  },
+  {
+    "_id": "47",
+    "sector": "Wooden houses"
+  },
+  {
+    "_id": "3",
+    "sector": "Other"
+  },
+  {
+    "_id": "37",
+    "sector": "Creative industries"
+  },
+  {
+    "_id": "29",
+    "sector": "Energy technology"
+  },
+  {
+    "_id": "33",
+    "sector": "Environment"
+  },
+  {
+    "_id": "2",
+    "sector": "Service"
+  },
+  {
+    "_id": "25",
+    "sector": "Business services"
+  },
+  {
+    "_id": "35",
+    "sector": "Engineering"
+  },
+  {
+    "_id": "28",
+    "sector": "Information Technology and Telecommunications"
+  },
+  {
+    "_id": "581",
+    "sector": "Data processing, Web portals, E-marketing"
+  },
+  {
+    "_id": "576",
+    "sector": "Programming, Consultancy"
+  },
+  {
+    "_id": "121",
+    "sector": "Software, Hardware"
+  },
+  {
+    "_id": "122",
+    "sector": "Telecommunications"
+  },
+  {
+    "_id": "22",
+    "sector": "Tourism"
+  },
+  {
+    "_id": "141",
+    "sector": "Translation services"
+  },
+  {
+    "_id": "21",
+    "sector": "Transport and Logistics"
+  },
+  {
+    "_id": "111",
+    "sector": "Air"
+  },
+  {
+    "_id": "114",
+    "sector": "Rail"
+  },
+  {
+    "_id": "112",
+    "sector": "Road"
+  },
+  {
+    "_id": "113",
+    "sector": "Water"
+  }
+]
+
+// Save data to MongoDB
+jsonData.forEach(async (item) => {
+  try {
+    const sector = new Sector(item);
+    await sector.save();
+    console.log(`Saved sector with _id: ${item._id}`);
+  } catch (err) {
+    console.error(`Error saving sector with _id ${item._id}: ${err.message}`);
+  }
+});
+
+app.get('/', (req, res) => {
+  res.send('Data has been saved to MongoDB');
+});
+
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
