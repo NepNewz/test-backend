@@ -17,14 +17,7 @@ export const user = async(req,res)=>{
         res.status(200).json(token)
 
        }
-        
-        
-        
-     
-
-
-        
-    } catch (error) {
+         } catch (error) {
         console.log(error)
         
     }
